@@ -22,7 +22,7 @@ type TaskProps = {
   percentage: number;
 };
 
-export default function Task({ text, percentage }: TaskProps) {
+const Task: React.FC<TaskProps> = ({ text, percentage }) => {
   const [open, setOpen] = useState(false);
   const animation2 = useSharedValue({ height: 400 });
 
@@ -56,7 +56,11 @@ export default function Task({ text, percentage }: TaskProps) {
             ]}
           >
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 9,
+              }}
             >
               {!open && (
                 <Text
@@ -65,7 +69,6 @@ export default function Task({ text, percentage }: TaskProps) {
                     {
                       height: "auto",
                       paddingBottom: 6,
-
                       width: "80%",
                     },
                   ]}
@@ -81,6 +84,7 @@ export default function Task({ text, percentage }: TaskProps) {
                     {
                       height: "auto",
                       width: "80%",
+                      // backgroundColor: "yellow",
                       textAlignVertical: "top",
                       // borderBottomWidth: 1,
                       // borderColor: "red",
@@ -91,22 +95,47 @@ export default function Task({ text, percentage }: TaskProps) {
                 />
               )}
               {open && (
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#e0e0e0",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: 30,
-                    height: 30,
-                    borderRadius: 20,
-                  }}
-                  onPress={() => {
-                    animation2.value = { height: 10 };
-                    setOpen(false);
-                  }}
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>x</Text>
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#e0e0e0",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 30,
+                      height: 30,
+                      borderRadius: 20,
+                      marginRight: 8,
+                    }}
+                    onPress={() => {
+                      animation2.value = { height: 10 };
+                      setOpen(false);
+                    }}
+                  >
+                    <FontAwesome6
+                      name="ellipsis"
+                      style={{ fontSize: 16, fontWeight: "bold" }}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#e0e0e0",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 30,
+                      height: 30,
+                      borderRadius: 20,
+                    }}
+                    onPress={() => {
+                      animation2.value = { height: 10 };
+                      setOpen(false);
+                    }}
+                  >
+                    <FontAwesome6
+                      name="arrow-up"
+                      style={{ fontSize: 16, fontWeight: "bold" }}
+                    />
+                  </TouchableOpacity>
+                </>
               )}
             </View>
             {!open && (
@@ -138,7 +167,7 @@ export default function Task({ text, percentage }: TaskProps) {
                 defaultValue="In Android you cannot draw outside of the component's boundaries,"
               />
             )}
-            <Text style={styles.subTask}>4/10</Text>
+            <Text style={styles.subTaskCount}>4/10</Text>
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
 
@@ -155,7 +184,22 @@ export default function Task({ text, percentage }: TaskProps) {
           ]}
         >
           {open && (
-            <View style={{ paddingHorizontal: 30, gap: 20 }}>
+            <ScrollView
+              nestedScrollEnabled={true}
+              style={{ paddingHorizontal: 22, marginBottom: 10 }}
+            >
+              <SubTask textSub={"Mencuci Motor"} />
+              <SubTask textSub={"Mencuci Handuk"} />
+              <SubTask textSub={"Mencuci Jam"} />
+              <SubTask textSub={"Mencuci Teras"} />
+              <SubTask textSub={"Mencuci Kursi"} />
+              <SubTask
+                textSub={
+                  "ddddjadbaj lbajdbajbd ajsbajbsajbsajsaibsj vauisbasb jj hjhjhj isbiausb isabaousba saousbaiu"
+                }
+              />
+              <SubTask textSub={"Mencuci Handuk"} />
+              <SubTask textSub={"Mencuci Jam"} />
               <SubTask textSub={"Mencuci Motor"} />
               <SubTask textSub={"Mencuci Handuk"} />
               <SubTask textSub={"Mencuci Jam"} />
@@ -164,19 +208,8 @@ export default function Task({ text, percentage }: TaskProps) {
               <SubTask textSub={"Mencuci Motor"} />
               <SubTask textSub={"Mencuci Handuk"} />
               <SubTask textSub={"Mencuci Jam"} />
-              <SubTask textSub={"Mencuci Teras"} />
-              <SubTask textSub={"Mencuci Kursi"} />
-              <SubTask textSub={"Mencuci Motor"} />
-              <SubTask textSub={"Mencuci Handuk"} />
-              <SubTask textSub={"Mencuci Jam"} />
-              <SubTask textSub={"Mencuci Teras"} />
-              <SubTask textSub={"Mencuci Kursi"} />
-              <SubTask textSub={"Mencuci Motor"} />
-              <SubTask textSub={"Mencuci Handuk"} />
-              <SubTask textSub={"Mencuci Jam"} />
-              <SubTask textSub={"Mencuci Teras"} />
-              <SubTask textSub={"Mencuci Kursi"} />
-            </View>
+              <AddSubTask />
+            </ScrollView>
           )}
           <View
             style={[
@@ -200,30 +233,107 @@ export default function Task({ text, percentage }: TaskProps) {
       </View>
     </>
   );
-}
+};
+
+export default Task;
 
 type SubTaskProps = {
   textSub: string;
+  descSub?: string;
 };
 
-const SubTask = ({ textSub }: SubTaskProps) => {
+const SubTask = ({ textSub, descSub }: SubTaskProps) => {
   const [complete, setComplete] = useState(false);
+  const [showDel, setShowDel] = useState(false);
   return (
-    <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-      <TouchableOpacity
-        style={[
-          styles.checkListSubTask,
-          { backgroundColor: complete ? "black" : "white" },
-        ]}
-        onPress={() => {
-          complete ? setComplete(false) : setComplete(true);
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 8,
+          alignItems: "center",
+          marginVertical: 6,
+          width: "90%",
+          // backgroundColor: "yellow",
+          justifyContent: "space-between",
         }}
       >
-        {complete && (
-          <FontAwesome6 name="check" style={{ fontSize: 13, color: "#fff" }} />
-        )}
+        <TouchableOpacity
+          style={[
+            styles.checkListSubTask,
+            { backgroundColor: complete ? "black" : "white" },
+          ]}
+          onPress={() => {
+            complete ? setComplete(false) : setComplete(true);
+          }}
+        >
+          {complete && (
+            <FontAwesome6
+              name="check"
+              style={{ fontSize: 13, color: "#fff" }}
+            />
+          )}
+        </TouchableOpacity>
+        <TextInput
+          multiline={true}
+          onFocus={() => {
+            setShowDel(true);
+          }}
+          onBlur={() => {
+            setShowDel(false);
+          }}
+          style={styles.descSubTask}
+        >
+          {textSub}
+        </TextInput>
+      </View>
+      {showDel && (
+        <TouchableOpacity
+          style={{
+            backgroundColor: "black",
+            width: 23,
+            height: 23,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 15,
+          }}
+        >
+          <FontAwesome6 name="xmark" style={{ fontSize: 16, color: "white" }} />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
+const AddSubTask = () => {
+  return (
+    <View
+      style={{
+        height: 50,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <TouchableOpacity
+        style={{
+          height: 22,
+          width: 22,
+          borderWidth: 2,
+          borderRadius: 7,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <FontAwesome6 name="add" />
       </TouchableOpacity>
-      <Text style={styles.descTask}>{textSub}</Text>
     </View>
   );
 };
@@ -261,10 +371,15 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     marginBottom: 2,
   },
-  subTask: {
+  descSubTask: {
+    fontSize: 16,
+    fontWeight: "300",
+    // backgroundColor: "yellow",
+    flex: 1,
+  },
+  subTaskCount: {
     fontSize: 16,
     fontWeight: "500",
-    // marginBottom:10,
     textAlign: "right",
     color: "#a0a0a0",
   },
